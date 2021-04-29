@@ -4,7 +4,7 @@ SELECT `name`,`lastname` FROM `ospiti` WHERE `document_type`= 'CI'
 
 2) Seleziona tutti gli ospiti che sono nati dopo il 1988
 
-SELECT `name`,`lastname`,`date_of_birth` FROM `ospiti` WHERE `date_of_birth` >= '1988'
+SELECT `name`,`lastname`,`date_of_birth` FROM `ospiti` WHERE `date_of_birth` > '1988'
 
 3) Seleziona tutti gli ospiti che hanno più di 20 anni (al momento dell’esecuzione della query)
 
@@ -30,3 +30,36 @@ SELECT `name`,`lastname` FROM `ospiti` WHERE `document_type` = 'Driver License' 
 8) Quanti posti letto ha l’hotel in totale?
 SELECT SUM(`beds`) AS 'totale_letti'
 FROM `stanze`
+
+
+GROUP BY
+1) Conta gli ospiti raggruppandoli per anno di nascita
+SELECT YEAR(`date_of_birth`) AS anno,COUNT(`id`) AS numero_ut FROM `ospiti` GROUP BY YEAR(`date_of_birth`)
+
+2) Somma i prezzi dei pagamenti raggruppandoli per status
+SELECT `status`, SUM(`price`) AS tot_prezzo FROM `pagamenti` GROUP BY `status`
+
+3) Conta quante volte è stata prenotata ogni stanza
+SELECT `stanza_id` AS stanza , COUNT(`id`) AS numero_prenotazioni FROM `prenotazioni` GROUP BY `stanza_id`
+
+4) Fai una analisi per vedere se ci sono ore in cui le prenotazioni sono più frequenti
+SELECT TIME(HOUR(`created_at`)) AS orario , COUNT(`id`) AS tot FROM `prenotazioni` GROUP BY TIME(orario)
+
+5) Quante prenotazioni ha fatto l’ospite che ha fatto più prenotazioni?
+SELECT `ospite_id` AS utente ,COUNT(`prenotazione_id`) AS conteggio FROM `prenotazioni_has_ospiti` GROUP BY utente ORDER BY conteggio DESC
+
+JOIN
+1) Come si chiamano gli ospiti che hanno fatto più di due prenotazioni?
+SELECT ospiti.name , `ospite_id` AS utente ,COUNT(`prenotazione_id`) AS conteggio FROM `prenotazioni_has_ospiti` INNER JOIN `ospiti` ON `prenotazioni_has_ospiti`.`ospite_id` = `ospiti`.`id` GROUP BY utente HAVING `conteggio` > 2 ORDER BY conteggio DESC
+
+2) Stampare tutti gli ospiti per ogni prenotazione
+SELECT ospiti.name , `prenotazione_id` AS prenotazione FROM `prenotazioni_has_ospiti` JOIN `ospiti` ON `prenotazioni_has_ospiti`.`ospite_id` = `ospiti`.`id` GROUP BY prenotazione HAVING `prenotazione` > 2 ORDER BY prenotazione DESC
+
+3) Stampare Nome, Cognome, Prezzo e Pagante per tutte le prenotazioni fatte a Maggio 2018
+
+
+4) Fai la somma di tutti i prezzi delle prenotazioni per le stanze del primo piano
+
+
+5) Prendi i dati di fatturazione per la prenotazione con id=7
+6) Le stanze sono state tutte prenotate almeno una volta? (Visualizzare le stanze non ancora prenotate) 
